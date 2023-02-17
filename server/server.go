@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"context"
@@ -9,8 +9,8 @@ import (
 )
 
 type CServer struct {
-	port   int    `yaml:"port"`
-	domain string `yaml:"domain"`
+	Port   int    `yaml:"port"`
+	Domain string `yaml:"domain"`
 }
 
 type Server struct {
@@ -20,7 +20,7 @@ type Server struct {
 
 func NewServer(cfg *CServer, log *logrus.Logger) *Server {
 	server := &http.Server{
-		Addr: fmt.Sprintf("%s:%d", cfg.domain, cfg.port),
+		Addr: fmt.Sprintf("%s:%d", cfg.Domain, cfg.Port),
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte("Hello, World!\n"))
 		}),
@@ -31,7 +31,7 @@ func NewServer(cfg *CServer, log *logrus.Logger) *Server {
 	}
 }
 
-func (s *Server) start() error {
+func (s *Server) Start() error {
 	err := s.server.ListenAndServe()
 	if err != nil {
 		s.log.Fatalf("Ошибка запуска сервера: %v", err)
@@ -40,7 +40,7 @@ func (s *Server) start() error {
 	return nil
 }
 
-func (s *Server) refresh() error {
+func (s *Server) Refresh() error {
 	s.log.Info("Остановка сервера...")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
